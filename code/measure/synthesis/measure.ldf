@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BaliProject version="2.0" title="measure" device="LFE3-35EA-8FN484C" synthesis="synplify" default_implementation="measure">
+    <Options/>
+    <Implementation title="measure" dir="build" description="measure" default_strategy="Strategy1">
+        <Options/>
+        <Source name="measure.lpf" type="Logic Preference" type_short="LPF">
+            <Options/>
+        </Source>
+    </Implementation>
+    <Strategy name="Strategy1" file="measure1.sty"/>
+</BaliProject>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BaliProject version="2.0" title="ethrecv" device="LFE3-35EA-8FN484C" synthesis="synplify" default_implementation="ethrecv">
+    <Options/>
+    <Implementation title="ethrecv" dir="build" description="ethrecv" default_strategy="Strategy1">
+        <Options/>
+        <Source name="ethrecv.lpf" type="Logic Preference" type_short="LPF">
+            <Options/>
+        </Source>
+    </Implementation>
+    <Strategy name="Strategy1" file="ethrecv1.sty"/>
+</BaliProject>
