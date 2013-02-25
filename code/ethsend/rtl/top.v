@@ -4,32 +4,21 @@ module top (
   , input        reset_n
 
   // Ethernet PHY#1 interface
-  , output       phy1_rst_n
   , input        phy1_125M_clk
   , input        phy1_tx_clk
+  , input        phy1_rx_clk
+  , input        phy1_rx_dv
+  , input  [7:0] phy1_rx_data
+  , output       phy1_mii_clk
+  , output       phy1_rst_n
   , output       phy1_gtx_clk
   , output       phy1_tx_en
   , output [7:0] phy1_tx_data
-  , input        phy1_rx_clk
-  , input        phy1_rx_dv
-  , input        phy1_rx_er
-  , input  [7:0] phy1_rx_data
-  , input        phy1_col
-  , input        phy1_crs
-  , output       phy1_mii_clk
-  , inout        phy1_mii_data
 
   // Switch/LED
   , input  [7:0] switch
   , output [7:0] led
 );
-
-assign phy1_mii_clk  = 1'b0;
-assign phy1_mii_data = 1'b0;
-assign phy1_tx_en    = tx_en;
-assign phy1_tx_data  = tx_data;
-assign phy1_gtx_clk  = phy1_125M_clk;
-
 
 //------------------------------------------------------------------
 // PHY cold reset (260 clock)
@@ -42,7 +31,7 @@ assign phy1_rst_n = coldsys_rst260;
 
 
 //------------------------------------------------------------------
-// generate ethernet FCS
+// ethernet FCS generator
 //------------------------------------------------------------------
 reg         crc_rd;
 wire        crc_init = (counter == 12'h08);
@@ -125,7 +114,7 @@ always @(posedge phy1_125M_clk) begin
       12'h2c: tx_data <= 8'h00;
       12'h2d: tx_data <= 8'h00;
       12'h2e: tx_data <= 8'd10;  // Target IP address = 10.0.21.99
-      12'h2f: tx_data <= 8'd0;
+      12'h2f: tx_data <= 8'd00;
       12'h30: tx_data <= 8'd21;
       12'h31: tx_data <= 8'd99;
       12'h32: tx_data <= 8'h00;  // Padding Area
@@ -146,7 +135,7 @@ always @(posedge phy1_125M_clk) begin
       12'h41: tx_data <= 8'h00;
       12'h42: tx_data <= 8'h00;
       12'h43: tx_data <= 8'h00;
-      12'h44: begin         // Frame Check Sequence
+      12'h44: begin              // Frame Check Sequence
         crc_rd  <= 1'b1;
         tx_data <= crc_out[31:24];
       end
@@ -162,7 +151,11 @@ always @(posedge phy1_125M_clk) begin
     endcase
   end
 end
-assign led[7:0] = tx_en ? 8'h0 : 8'hff;
+assign phy1_mii_clk  = 1'b0;
+assign phy1_tx_en    = tx_en;
+assign phy1_tx_data  = tx_data;
+assign phy1_gtx_clk  = phy1_125M_clk;
+assign led[7:0]      = tx_en ? 8'h0 : 8'hff;
 
 endmodule
 
