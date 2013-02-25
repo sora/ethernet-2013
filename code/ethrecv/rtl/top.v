@@ -21,10 +21,10 @@ module top (
 );
 
 //------------------------------------------------------------------
-// Global counter (Clock: PHY1_125M_clk)
+// Global counter (Clock: phy1_rx_clk)
 //------------------------------------------------------------------
 reg [11:0] counter;
-always @(posedge phy1_125M_clk) begin
+always @(posedge phy1_rx_clk) begin
   if (reset_n == 1'b0)
     counter <= 12'd0;
   else begin

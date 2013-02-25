@@ -21,7 +21,7 @@ module top (
 );
 
 //------------------------------------------------------------------
-// Global counter (Clock: PHY1_125M_clk)
+// Global counter (Clock: phy1_125M_clk)
 //------------------------------------------------------------------
 reg [11:0] counter;
 always @(posedge phy1_125M_clk) begin
