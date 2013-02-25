@@ -1,4 +1,6 @@
 # intermediate build files
+!.keep_me
+
 *.bgn
 #*.bit
 *.bld
@@ -61,4 +63,20 @@ _xmsgs/
 
 # Vim
 .*.sw[a-z]
+
+# Lattice
+.run_manager.ini
+.spread_sheet.ini
+.spreadsheet_view.ini
+.setting.ini
+.build_status
+*.ccl
+*.log
+*.txt
+*.html
+reportview.xml
+build/syntmp/
+syntmp
+*.pty
+*.prs
 

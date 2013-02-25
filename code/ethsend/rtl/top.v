@@ -1,68 +1,64 @@
+`default_nettype none
+
 module top (
   // system interface
-    input        clock
-  , input        reset_n
+    input wire clock
+  , input wire reset_n
 
   // Ethernet PHY#1 interface
-  , input        phy1_125M_clk
-  , input        phy1_tx_clk
-  , input        phy1_rx_clk
-  , input        phy1_rx_dv
-  , input  [7:0] phy1_rx_data
-  , output       phy1_mii_clk
-  , output       phy1_rst_n
-  , output       phy1_gtx_clk
-  , output       phy1_tx_en
-  , output [7:0] phy1_tx_data
+  , input wire phy1_125M_clk
+  , input wire phy1_tx_clk
+  , input wire phy1_rx_clk
+  , input wire phy1_rx_dv
+  , input wire [7:0] phy1_rx_data
+  , output wire phy1_mii_clk
+  , output wire phy1_rst_n
+  , output wire phy1_gtx_clk
+  , output wire phy1_tx_en
+  , output wire [7:0] phy1_tx_data
 
   // Switch/LED
-  , input  [7:0] switch
-  , output [7:0] led
+  , input wire [7:0] switch
+  , output wire [7:0] led
 );
+
+//------------------------------------------------------------------
+// Global counter (Clock: PHY1_125M_clk)
+//------------------------------------------------------------------
+reg [11:0] counter;
+always @(posedge phy1_125M_clk) begin
+  if (reset_n == 1'b0)
+    counter <= 12'd0;
+  else
+    counter <= counter + 12'd1;
+end
+
 
 //------------------------------------------------------------------
 // PHY cold reset (260 clock)
 //------------------------------------------------------------------
 reg [8:0] coldsys_rst = 0;
-assign coldsys_rst260 = (coldsys_rst==9'd260);
+wire coldsys_rst260 = (coldsys_rst == 9'd260);
 always @(posedge clock)
   coldsys_rst <= !coldsys_rst260 ? coldsys_rst + 9'd1 : 9'd260;
 assign phy1_rst_n = coldsys_rst260;
 
 
 //------------------------------------------------------------------
-// ethernet FCS generator
-//------------------------------------------------------------------
-reg         crc_rd;
-wire        crc_init = (counter == 12'h08);
-wire [31:0] crc_out;
-wire        crc_data_en = ~crc_rd;
-crc_gen crc_inst (
-    .Reset(~reset_n)
-  , .Clk(phy1_125M_clk)
-  , .Init(crc_init)
-  , .Frame_data(tx_data)
-  , .Data_en(crc_data_en)
-  , .CRC_rd(crc_rd)
-  , .CRC_end()
-  , .CRC_out(crc_out)
-);
-
-
-//------------------------------------------------------------------
 // sender logic
 //------------------------------------------------------------------
-reg        tx_en;
-reg [ 7:0] tx_data;
-reg [11:0] counter;
+reg tx_en;
+reg [7:0] tx_data;
+reg crc_rd;
+wire crc_init = (counter == 12'h08);
+wire [31:0] crc_out;
+wire crc_data_en = ~crc_rd;
 always @(posedge phy1_125M_clk) begin
   if (reset_n == 1'b0) begin
     tx_data <= 11'h0;
     tx_en   <= 1'b0;
-    counter <= 12'd0;
     crc_rd  <= 1'b0;
   end else begin
-    counter <= counter + 12'd1;
     case (counter)
       12'h00: begin
         tx_data <= 8'h55;
@@ -104,7 +100,7 @@ always @(posedge phy1_125M_clk) begin
       12'h22: tx_data <= 8'ha4;
       12'h23: tx_data <= 8'h8e;
       12'h24: tx_data <= 8'd10;  // Sender IP address = 10.0.21.10
-      12'h25: tx_data <= 8'd0;
+      12'h25: tx_data <= 8'd00;
       12'h26: tx_data <= 8'd21;
       12'h27: tx_data <= 8'd10;
       12'h28: tx_data <= 8'h00;  // Target MAC address = 00-00-00-00-00-00
@@ -151,11 +147,27 @@ always @(posedge phy1_125M_clk) begin
     endcase
   end
 end
-assign phy1_mii_clk  = 1'b0;
-assign phy1_tx_en    = tx_en;
-assign phy1_tx_data  = tx_data;
-assign phy1_gtx_clk  = phy1_125M_clk;
-assign led[7:0]      = tx_en ? 8'h0 : 8'hff;
+assign phy1_mii_clk = 1'b0;
+assign phy1_tx_en   = tx_en;
+assign phy1_tx_data = tx_data;
+assign phy1_gtx_clk = phy1_125M_clk;
+assign led[7:0]     = tx_en ? 8'h0 : 8'hff;
+
+
+//------------------------------------------------------------------
+// ethernet FCS generator
+//------------------------------------------------------------------
+crc_gen crc_inst (
+    .Reset(~reset_n)
+  , .Clk(phy1_125M_clk)
+  , .Init(crc_init)
+  , .Frame_data(tx_data)
+  , .Data_en(crc_data_en)
+  , .CRC_rd(crc_rd)
+  , .CRC_end()
+  , .CRC_out(crc_out)
+);
 
 endmodule
 
+`default_nettype wire
