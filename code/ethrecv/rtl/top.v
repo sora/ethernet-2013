@@ -30,11 +30,12 @@ reg [11:0] counter;
 always @(posedge phy1_125M_clk) begin
   if (reset_n == 1'b0)
     counter <= 12'd0;
-  else
-	  if (phy1_rx_dv)
-        counter <= counter + 12'd1;
-	  else
-        counter <= 11'd0;
+  else begin
+    if (phy1_rx_dv)
+      counter <= counter + 12'd1;
+    else
+      counter <= 11'd0;
+  end
 end
 
 
@@ -56,7 +57,7 @@ integer i;
 always @(posedge phy1_rx_clk) begin
   if (reset_n == 1'b0) begin
     for (i=0; i<=2047; i=i+1)
-		rx_data[i] <= 8'h0;
+      rx_data[i] <= 8'h0;
   end else begin
     if (phy1_rx_dv)
       rx_data[counter] <= phy1_rx_data;
@@ -71,3 +72,4 @@ assign led[7:0]     = ~rx_data[switch];   // display packet data using LED
 endmodule
 
 `default_nettype wire
+

@@ -171,3 +171,4 @@ crc_gen crc_inst (
 endmodule
 
 `default_nettype wire
+
