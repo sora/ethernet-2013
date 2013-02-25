@@ -199,6 +199,19 @@ FPGAで1000BASE-Tを使うときは，以下の構成になります．
 - データ保持数は16個
     * memoryはFPGA内のBRAMを利用
 
+レポジトリは，ここにあります．
+ファイルの説明です．
+拡張性を考えて，必要以上にモジュールを分割しています．
+
+- top.v
+    * topモジュール．memcachebinaryprotocolを解釈
+- lookup.v
+    * set/getを発行
+- memory.v
+    * データの保存場所
+- crc.v
+    * 今回はhashkeyの生成にCRC32を利用
+
 
 #### 10G 事始め
 
