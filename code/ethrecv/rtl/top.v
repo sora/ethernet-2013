@@ -31,7 +31,7 @@ always @(posedge phy1_125M_clk) begin
     if (phy1_rx_dv)
       counter <= counter + 12'd1;
     else
-      counter <= 11'd0;
+      counter <= 12'd0;
   end
 end
 
@@ -49,16 +49,10 @@ assign phy1_rst_n = coldsys_rst260;
 //------------------------------------------------------------------
 // Receiver logic
 //------------------------------------------------------------------
-reg [7:0] rx_data [0:1023];
-integer i;
+reg [7:0] rx_data [0:2047];
 always @(posedge phy1_rx_clk) begin
-  if (reset_n == 1'b0) begin
-    for (i=0; i<=1023; i=i+1)
-      rx_data[i] <= 8'h0;
-  end else begin
     if (phy1_rx_dv)
       rx_data[counter] <= phy1_rx_data;
-  end
 end
 assign phy1_tx_en   = 1'b0;
 assign phy1_tx_data = 8'h0;
