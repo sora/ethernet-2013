@@ -188,6 +188,17 @@ FPGAで1000BASE-Tを使うときは，以下の構成になります．
 -----------------------------------------
 ### 応用: 簡単なCPU-lessなKVSを作ってみる
 
+まずは仕様を決めます．
+ミニマムコード用に最低限の機能のみの実装です．
+
+- 通信プロトコルにUDPを利用
+- コマンドはsetとget のみサポート
+- Memcache Binary Protocol を使う
+- Key length は binary: 64 bit
+- Value length は binary: 256 bit
+- データ保持数は16個
+    * memoryはFPGA内のBRAMを利用
+
 
 #### 10G 事始め
 
