@@ -56,10 +56,7 @@ FPGAボードは，Lattice社のECP3 versa dev kit ($299, 1000Base-T 2ポート,
 
 はじめに，いまどきのハイエンドFPGAチップの性能を確認してみます．<br>
 最近のFPGAは，最新のモバイル向けCPUに匹敵する28nmプロセスで製造して[たり][ZYNQ]，チップ上にiPad miniと同程度のクラスのARMコアを搭載してい[たり][KINTEX-7]，1チップで10GBase-Rを96ポート (総帯域 2.5Tb/s) を扱えるシリアルトランシーバを搭載し[たり][SERDES]，部分的ながらSR-IOVのハードマクロが搭載され[たり][SR-IOV]します．
-
-2013年登場のFPGAに目を向けると，新興FPGAメーカーから，Intel Fabの22nm Tri-Gateトランジスタで製造さ[れた][INTEL-FAB]ハイエンドFPGAチップと100GE CFP cage搭載の開発ボードが登場します．
-これは，最大動作周波数1GHz超え！Ethernet 10/40/100GのPCSとMACのハードIP Coreを搭載！1チップで100GE 4ポート処理！User IO 960 pin！LUTが1M超え(今回使用するLatticeECP3は33K LUT)！BRAM 82 Mb！と，FPGAという名前を変えてもいいんじゃないかと思う成長を遂げています．
-値段を聞くのが怖いです．
+2013年登場のFPGAに目を向けると，新興FPGAメーカーから，Intel Fabの22nm Tri-Gateトランジスタで製造さ[れた][INTEL-FAB]FPGAチップと100GE CFP cage搭載の開発ボードが登場します．
 
 さらに製品に目を向けると，大容量のNANDフラッシュのコントローラに使われてい[た][FUSION-IO_1] [り][FUSION-IO_2]，100G向けネットワークテスタに使われてい[たり][JDSU]，バックボーンネットワーク機器に使わ[れて][ARISTA]い[たり][BROCADE]するみたいです．
 これはデータセンタではありませんが，デジカメの画像処理エンジンに使われてい[たり][SIGMA]，スマホに使われてい[たり][KYOCERA]の例もあるみたいです．
