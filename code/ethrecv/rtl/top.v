@@ -7,12 +7,9 @@ module top (
 
   // Ethernet PHY#1 interface
   , input wire phy1_125M_clk
-  , input wire phy1_tx_clk
   , input wire phy1_rx_clk
   , input wire phy1_rx_dv
   , input wire [7:0] phy1_rx_data
-  , inout wire phy1_mii_data
-  , output wire phy1_mii_clk
   , output wire phy1_rst_n
   , output wire phy1_gtx_clk
   , output wire phy1_tx_en
@@ -63,7 +60,6 @@ always @(posedge phy1_rx_clk) begin
       rx_data[counter] <= phy1_rx_data;
   end
 end
-assign phy1_mii_clk = 1'b0;
 assign phy1_tx_en   = 1'b0;
 assign phy1_tx_data = 8'h0;
 assign phy1_gtx_clk = 1'b0;
