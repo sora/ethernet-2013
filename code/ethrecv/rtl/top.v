@@ -51,8 +51,8 @@ assign phy1_rst_n = coldsys_rst260;
 //------------------------------------------------------------------
 reg [7:0] rx_data [0:2047];
 always @(posedge phy1_rx_clk) begin
-    if (phy1_rx_dv)
-      rx_data[counter] <= phy1_rx_data;
+  if (phy1_rx_dv)
+    rx_data[counter] <= phy1_rx_data;
 end
 assign phy1_tx_en   = 1'b0;
 assign phy1_tx_data = 8'h0;
