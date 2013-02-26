@@ -145,7 +145,10 @@ MIIやMDIの詳細は，[Ethernetのしくみとハードウェア設計技法][
 今回のトピックで扱うEthernet 1000BASE-Tであれば，IEEE 802.3によって仕様が規定されているので，その仕様にあるデータのIn/Outの仕様であるGMII (125MHzで1clockあたり8bitのデータを入出力する仕様であり．つまり，掛け算すれば1秒間に1000MBになります) 
 
 また，今回はEthernetの1000BASE-Tを想定しています．
-けれど，10G以降の回路設計も基本は変わりません．さらにいえば，PCI Expressも物理層，データリンク層があって，Ethernetに近い仕様です．今回の話が理解できれば，今後も大きく変わることのない，高速インタフェース設計の基礎が理解できます．もう少し詳細な話題は，この文章の"Ethernet 10G, PCI/PCIe回路設計の事始め"で扱います．
+けれど，10G以降の回路設計も基本は変わりません．
+さらにいえば，PCI Expressも物理層，データリンク層があって，Ethernetに近い仕様です．
+今回の話が理解できれば，今後も大きく変わることのない，高速インタフェース設計の基礎が理解できます．
+もう少し詳細な話題は，この文章の"Ethernet 10G, PCI/PCIe回路設計の事始め"で扱います．
 
 
 -----------
@@ -176,11 +179,53 @@ FPGAで1000BASE-Tを使うときは，以下の構成になります．
 -----------------------------------
 ### GMIIを使ってPHYチップと通信する
 
-------------------
-### 送信回路を作る
+    // PHY cold reset (260 clock)
+    reg [8:0] coldsys_rst = 0;
+    wire coldsys_rst260 = (coldsys_rst == 9'd260);
+    always @(posedge clock)
+      coldsys_rst <= !coldsys_rst260 ? coldsys_rst + 9'd1 : 9'd260;
+    assign phy1_rst_n = coldsys_rst260;
 
 ------------------
 ### 受信回路を作る
+
+    // Receiver logic
+    reg [7:0] rx_data [0:2047];
+    always @(posedge phy1_rx_clk) begin
+      if (phy1_rx_dv)
+          rx_data[counter] <= phy1_rx_data;
+    end
+    assign led[7:0] = ~rx_data[switch];
+
+
+------------------
+### 送信回路を作る
+
+    reg tx_en;
+    reg [7:0] tx_data;
+    reg crc_rd;
+    wire crc_init = (counter == 12'h08);
+    wire [31:0] crc_out;
+    wire crc_data_en = ~crc_rd;
+    always @(posedge phy1_125M_clk) begin
+      if (reset_n == 1'b0) begin
+          tx_data <= 11'h0;
+          tx_en   <= 1'b0;
+          crc_rd  <= 1'b0;
+      end else begin
+    case (counter)
+      12'h00: begin
+        tx_data <= 8'h55;
+        tx_en   <= 1'b1;
+      end
+      12'h01: tx_data <= 8'h55;  // Preamble
+      12'h02: tx_data <= 8'h55;
+      12'h03: tx_data <= 8'h55;
+      12'h04: tx_data <= 8'h55;
+      12'h05: tx_data <= 8'h55;
+      12'h06: tx_data <= 8'h55;
+      12'h07: tx_data <= 8'hd5;  // preamble + Start Frame Delimiter
+
 
 ----------------------------------------
 ### 完成した回路の内部処理遅延を計測する
