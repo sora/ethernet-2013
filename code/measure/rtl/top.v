@@ -265,33 +265,33 @@ end
 //------------------------------------------------------------------
 // segled: segled LED
 //------------------------------------------------------------------
-reg [15:0] segled_tmp;
+reg [15:0] segled_reg;
 always @(posedge clock) begin
   if (!reset_n)
-    segled_tmp <= 15'h0;
+    segled_reg <= 15'h0;
   else begin
     case (num)
       //                   .PNMLKJHGFEDCBA
-      4'h0: segled_tmp <= 15'b000000000111111;
-      4'h1: segled_tmp <= 15'b000000000000110;
-      4'h2: segled_tmp <= 15'b010001000011011;
-      4'h3: segled_tmp <= 15'b010001000001111;
-      4'h4: segled_tmp <= 15'b010001000100110;
-      4'h5: segled_tmp <= 15'b010001000101101;
-      4'h6: segled_tmp <= 15'b010001000111101;
-      4'h7: segled_tmp <= 15'b000000000000111;
-      4'h8: segled_tmp <= 15'b010001000111111;
-      4'h9: segled_tmp <= 15'b010001000100111;
-      4'ha: segled_tmp <= 15'b010001000110111;
-      4'hb: segled_tmp <= 15'b010001000111100;
-      4'hc: segled_tmp <= 15'b000000000111001;
-      4'hd: segled_tmp <= 15'b010001000011110;
-      4'he: segled_tmp <= 15'b010001000111001;
-      4'hf: segled_tmp <= 15'b010001000110001;
+      4'h0: segled_reg <= 15'b000000000111111;
+      4'h1: segled_reg <= 15'b000000000000110;
+      4'h2: segled_reg <= 15'b010001000011011;
+      4'h3: segled_reg <= 15'b010001000001111;
+      4'h4: segled_reg <= 15'b010001000100110;
+      4'h5: segled_reg <= 15'b010001000101101;
+      4'h6: segled_reg <= 15'b010001000111101;
+      4'h7: segled_reg <= 15'b000000000000111;
+      4'h8: segled_reg <= 15'b010001000111111;
+      4'h9: segled_reg <= 15'b010001000100111;
+      4'ha: segled_reg <= 15'b010001000110111;
+      4'hb: segled_reg <= 15'b010001000111100;
+      4'hc: segled_reg <= 15'b000000000111001;
+      4'hd: segled_reg <= 15'b010001000011110;
+      4'he: segled_reg <= 15'b010001000111001;
+      4'hf: segled_reg <= 15'b010001000110001;
     endcase
   end
 end
-assign segled = ~segled_tmp;
+assign segled = ~segled_reg;
 
 endmodule
 
