@@ -72,7 +72,7 @@ end
 
 
 //------------------------------------------------------------------
-// 32 bit counter using timestamp (Clock: phy1_125M_clk)
+// 32 bit counter for timestamp (Clock: phy1_125M_clk)
 //------------------------------------------------------------------
 reg [31:0] timer;
 always @(posedge phy1_125M_clk) begin
@@ -242,7 +242,7 @@ assign led          = phy2_rx_dv == 1'b1 ? 8'h0 : 8'hff; // displaying when rece
 
 
 //------------------------------------------------------------------
-// num: latency number for display
+// num: a part of the latency value for display
 //------------------------------------------------------------------
 reg [3:0] num;
 always @(posedge phy2_rx_clk) begin
