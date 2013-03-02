@@ -2,21 +2,21 @@
 
 module top (
   // system interface
-    input wire clock
-  , input wire reset_n
+    input  wire clock
+  , input  wire reset_n
 
   // Ethernet PHY#1 interface
-  , input wire phy1_125M_clk
-  , input wire phy1_rx_clk
-  , input wire phy1_rx_dv
-  , input wire [7:0] phy1_rx_data
+  , input  wire phy1_125M_clk
+  , input  wire phy1_rx_clk
+  , input  wire phy1_rx_dv
+  , input  wire [7:0] phy1_rx_data
   , output wire phy1_rst_n
   , output wire phy1_gtx_clk
   , output wire phy1_tx_en
   , output wire [7:0] phy1_tx_data
 
   // Switch and LED
-  , input wire [7:0] switch
+  , input  wire [7:0] switch
   , output wire [7:0] led
 );
 
