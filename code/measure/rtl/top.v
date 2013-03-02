@@ -30,7 +30,7 @@ module top (
   // Switch and LED
   , input wire [7:0] switch
   , output wire [7:0] led
-  , output reg [14:0] segled
+  , output wire [14:0] segled
 );
 
 //------------------------------------------------------------------
@@ -89,7 +89,7 @@ end
 reg tx_en;
 reg [7:0] tx_data;
 reg crc_rd;
-wire crc_init = (counter == 12'h08);
+wire crc_init = (txcounter == 12'h08);
 wire [31:0] crc_out;
 wire crc_data_en = ~crc_rd;
 always @(posedge phy1_125M_clk) begin
@@ -238,7 +238,7 @@ end
 assign phy2_tx_en   = 1'b0;
 assign phy2_tx_data = 8'h0;
 assign phy2_gtx_clk = phy2_125M_clk;
-assign led[7:0]     = phy2_rx_dv == 1'b1 ? 8'h0 : 8'hff; // displaying when received a packet
+assign led          = phy2_rx_dv == 1'b1 ? 8'h0 : 8'hff; // displaying when received a packet
 
 
 //------------------------------------------------------------------
@@ -265,31 +265,33 @@ end
 //------------------------------------------------------------------
 // segled: segled LED
 //------------------------------------------------------------------
+reg [15:0] segled_tmp;
 always @(posedge clock) begin
   if (!reset_n)
-    segled <= ~15'h0;
+    segled_tmp <= 15'h0;
   else begin
     case (num)
       //                   .PNMLKJHGFEDCBA
-      4'h0: segled <= ~15'b000000000111111;
-      4'h1: segled <= ~15'b000000000000110;
-      4'h2: segled <= ~15'b010001000011011;
-      4'h3: segled <= ~15'b010001000001111;
-      4'h4: segled <= ~15'b010001000100110;
-      4'h5: segled <= ~15'b010001000101101;
-      4'h6: segled <= ~15'b010001000111101;
-      4'h7: segled <= ~15'b000000000000111;
-      4'h8: segled <= ~15'b010001000111111;
-      4'h9: segled <= ~15'b010001000100111;
-      4'ha: segled <= ~15'b010001000110111;
-      4'hb: segled <= ~15'b010001000111100;
-      4'hc: segled <= ~15'b000000000111001;
-      4'hd: segled <= ~15'b010001000011110;
-      4'he: segled <= ~15'b010001000111001;
-      4'hf: segled <= ~15'b010001000110001;
+      4'h0: segled_tmp <= 15'b000000000111111;
+      4'h1: segled_tmp <= 15'b000000000000110;
+      4'h2: segled_tmp <= 15'b010001000011011;
+      4'h3: segled_tmp <= 15'b010001000001111;
+      4'h4: segled_tmp <= 15'b010001000100110;
+      4'h5: segled_tmp <= 15'b010001000101101;
+      4'h6: segled_tmp <= 15'b010001000111101;
+      4'h7: segled_tmp <= 15'b000000000000111;
+      4'h8: segled_tmp <= 15'b010001000111111;
+      4'h9: segled_tmp <= 15'b010001000100111;
+      4'ha: segled_tmp <= 15'b010001000110111;
+      4'hb: segled_tmp <= 15'b010001000111100;
+      4'hc: segled_tmp <= 15'b000000000111001;
+      4'hd: segled_tmp <= 15'b010001000011110;
+      4'he: segled_tmp <= 15'b010001000111001;
+      4'hf: segled_tmp <= 15'b010001000110001;
     endcase
   end
 end
+assign segled = ~segled_tmp;
 
 endmodule
 
