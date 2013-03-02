@@ -263,9 +263,9 @@ always @(posedge phy2_rx_clk) begin
 end
 
 //------------------------------------------------------------------
-// segled: segled LED
+// segled_reg: 15-segment LED
 //------------------------------------------------------------------
-reg [15:0] segled_reg;
+reg [14:0] segled_reg;
 always @(posedge clock) begin
   if (!reset_n)
     segled_reg <= 15'h0;
