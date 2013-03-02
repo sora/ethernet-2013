@@ -271,7 +271,7 @@ always @(posedge clock) begin
     segled_reg <= 15'h0;
   else begin
     case (num)
-      //                   .PNMLKJHGFEDCBA
+      //                      .PNMLKJHGFEDCBA
       4'h0: segled_reg <= 15'b000000000111111;
       4'h1: segled_reg <= 15'b000000000000110;
       4'h2: segled_reg <= 15'b010001000011011;
