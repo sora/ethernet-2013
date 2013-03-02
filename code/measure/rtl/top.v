@@ -49,7 +49,7 @@ assign phy2_rst_n = coldsys_rst260;
 //------------------------------------------------------------------
 reg [11:0] txcounter;
 always @(posedge phy1_125M_clk) begin
-  if (reset_n == 1'b0)
+  if (!reset_n)
     txcounter <= 12'd0;
   else
     txcounter <= txcounter + 12'd1;
@@ -61,12 +61,12 @@ end
 //------------------------------------------------------------------
 reg [11:0] rxcounter;
 always @(posedge phy2_rx_clk) begin
-  if (reset_n == 1'b0)
+  if (!reset_n)
     rxcounter <= 12'd0;
   else
-    if (phy2_rx_dv) begin
+    if (phy2_rx_dv)
       rxcounter <= rxcounter + 12'd1;
-    end else
+    else
       rxcounter <= 12'd0;
 end
 
@@ -76,11 +76,10 @@ end
 //------------------------------------------------------------------
 reg [31:0] timer;
 always @(posedge phy1_125M_clk) begin
-  if (reset_n == 1'b0) begin
+  if (!reset_n)
     timer <= 32'd0;
-  end else begin
+  else
     timer <= timer + 32'd1;
-  end
 end
 
 
@@ -94,10 +93,10 @@ wire crc_init = (counter == 12'h08);
 wire [31:0] crc_out;
 wire crc_data_en = ~crc_rd;
 always @(posedge phy1_125M_clk) begin
-  if (reset_n == 1'b0) begin
+  if (!reset_n) begin
     tx_en   <= 1'b0;
     crc_rd  <= 1'b0;
-    tx_data <= 8'h00;
+    tx_data <= 8'h0;
   end else begin
     case (txcounter)
       12'h00: begin
@@ -150,7 +149,7 @@ always @(posedge phy1_125M_clk) begin
       12'h2c: tx_data <= 8'h00;
       12'h2d: tx_data <= 8'h00;
       12'h2e: tx_data <= 8'd10;  // Target IP address = 10.0.21.99
-      12'h2f: tx_data <= 8'd0;
+      12'h2f: tx_data <= 8'd00;
       12'h30: tx_data <= 8'd21;
       12'h31: tx_data <= 8'd99;
       12'h32: tx_data <= 8'hde;  // Padding Area
@@ -159,8 +158,8 @@ always @(posedge phy1_125M_clk) begin
       12'h35: tx_data <= 8'hef;
       12'h36: tx_data <= timer[31:24];  // 32 bit timestamp
       12'h37: tx_data <= timer[23:16];
-      12'h38: tx_data <= timer[15:8];
-      12'h39: tx_data <= timer[7:0];
+      12'h38: tx_data <= timer[15: 8];
+      12'h39: tx_data <= timer[ 7: 0];
       12'h3a: tx_data <= 8'h00;
       12'h3b: tx_data <= 8'h00;
       12'h3c: tx_data <= 8'h00;
@@ -176,11 +175,11 @@ always @(posedge phy1_125M_clk) begin
         tx_data <= crc_out[31:24];
       end
       12'h45: tx_data <= crc_out[23:16];
-      12'h46: tx_data <= crc_out[15:8];
-      12'h47: tx_data <= crc_out[7:0];
+      12'h46: tx_data <= crc_out[15: 8];
+      12'h47: tx_data <= crc_out[ 7: 0];
       12'h48: begin
         tx_en   <= 1'b0;
-        tx_data <= 8'h00;
+        tx_data <= 8'h0;
         crc_rd  <= 1'b0;
       end
       default: tx_data <= 8'h0;
@@ -213,13 +212,12 @@ crc_gen crc_inst (
 reg [31:0] magic_code;
 reg [31:0] recv_timer;
 reg [31:0] latency;
-reg [ 3:0] num;
 always @(posedge phy2_rx_clk) begin
-  if (reset_n == 1'b0) begin
+  if (!reset_n) begin
     recv_timer <= 32'd0;
     latency    <= 32'd0;
   end else begin
-    if ( phy2_rx_dv ) begin
+    if (phy2_rx_dv) begin
       case (rxcounter)
         12'h32: magic_code[31:24] <= phy2_rx_data;
         12'h33: magic_code[24:16] <= phy2_rx_data;
@@ -235,26 +233,6 @@ always @(posedge phy2_rx_clk) begin
           end
       endcase
     end
-    if (switch[0])
-      num <= latency[ 3: 0];
-    else if (switch[1])
-      num <= latency[ 7: 4];
-    else if (switch[2])
-      num <= latency[11:8];
-    else if (switch[3])
-      num <= latency[15:12];
-    else if (switch[4])
-      num <= latency[19:16];
-    else if (switch[5])
-      num <= latency[23:20];
-    else if (switch[6])
-      num <= latency[27:24];
-    else if (switch[6])
-      num <= latency[27:24];
-    else if (switch[7])
-      num <= latency[31:28];
-    else
-      num <= latency[ 3: 0];
   end
 end
 assign phy2_tx_en   = 1'b0;
@@ -264,12 +242,33 @@ assign led[7:0]     = phy2_rx_dv == 1'b1 ? 8'h0 : 8'hff; // displaying when rece
 
 
 //------------------------------------------------------------------
-// LED to display packet's latency (unit: 8ns)
+// num: latency number for display
+//------------------------------------------------------------------
+reg [3:0] num;
+always @(posedge phy2_rx_clk) begin
+  if (!reset_n)
+    num <= 4'b0;
+  else begin
+    if      (switch[0]) num <= latency[ 3: 0];
+    else if (switch[1]) num <= latency[ 7: 4];
+    else if (switch[2]) num <= latency[11: 8];
+    else if (switch[3]) num <= latency[15:12];
+    else if (switch[4]) num <= latency[19:16];
+    else if (switch[5]) num <= latency[23:20];
+    else if (switch[6]) num <= latency[27:24];
+    else if (switch[6]) num <= latency[27:24];
+    else if (switch[7]) num <= latency[31:28];
+    else                num <= latency[ 3: 0];
+  end
+end
+
+//------------------------------------------------------------------
+// segled: segled LED
 //------------------------------------------------------------------
 always @(posedge clock) begin
-  if (reset_n == 1'b0) begin
+  if (!reset_n)
     segled <= ~15'h0;
-  end else begin
+  else begin
     case (num)
       //                   .PNMLKJHGFEDCBA
       4'h0: segled <= ~15'b000000000111111;
