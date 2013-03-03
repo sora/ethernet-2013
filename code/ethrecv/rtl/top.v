@@ -21,6 +21,16 @@ module top (
 );
 
 //------------------------------------------------------------------
+// PHY cold reset (10 ms)
+//------------------------------------------------------------------
+reg [19:0] coldsys_rst = 0;
+wire coldsys_rst10ms = (coldsys_rst == 20'h100000);
+always @(posedge clock)
+  coldsys_rst <= !coldsys_rst10ms ? coldsys_rst + 20'h1 : 20'h100000;
+assign phy1_rst_n = coldsys_rst10ms;
+
+
+//------------------------------------------------------------------
 // Global counter (Clock: phy1_rx_clk)
 //------------------------------------------------------------------
 reg [11:0] counter;
@@ -34,16 +44,6 @@ always @(posedge phy1_rx_clk) begin
       counter <= 12'd0;
   end
 end
-
-
-//------------------------------------------------------------------
-// PHY cold reset (260 clock)
-//------------------------------------------------------------------
-reg [8:0] coldsys_rst = 0;
-wire coldsys_rst260 = (coldsys_rst == 9'd260);
-always @(posedge clock)
-  coldsys_rst <= !coldsys_rst260 ? coldsys_rst + 9'd1 : 9'd260;
-assign phy1_rst_n = coldsys_rst260;
 
 
 //------------------------------------------------------------------
