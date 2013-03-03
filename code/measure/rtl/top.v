@@ -34,14 +34,14 @@ module top (
 );
 
 //------------------------------------------------------------------
-// PHY cold reset (260 clock)
+// PHY cold reset (10 ms)
 //------------------------------------------------------------------
-reg [8:0] coldsys_rst = 0;
-wire coldsys_rst260 = (coldsys_rst == 9'd260);
+reg [19:0] coldsys_rst = 0;
+wire coldsys_rst10ms = (coldsys_rst == 20'h100000);
 always @(posedge clock)
-  coldsys_rst <= !coldsys_rst260 ? coldsys_rst + 9'd1 : 9'd260;
-assign phy1_rst_n = coldsys_rst260;
-assign phy2_rst_n = coldsys_rst260;
+  coldsys_rst <= !coldsys_rst10ms ? coldsys_rst + 20'h1 : 20'h100000;
+assign phy1_rst_n = coldsys_rst10ms;
+assign phy2_rst_n = coldsys_rst10ms;
 
 
 //------------------------------------------------------------------
@@ -228,9 +228,8 @@ always @(posedge phy2_rx_clk) begin
         12'h38: recv_timer[15: 8] <= phy2_rx_data;
         12'h39: recv_timer[ 7: 0] <= phy2_rx_data;
         12'h3a:
-          if (magic_code == 32'hdeadbeef) begin
+          if (magic_code == 32'hdeadbeef)
             latency <= timer - recv_timer;
-          end
       endcase
     end
   end
@@ -263,7 +262,7 @@ always @(posedge phy2_rx_clk) begin
 end
 
 //------------------------------------------------------------------
-// segled_reg: 15-segment LED
+// segled: 14-segment LED
 //------------------------------------------------------------------
 reg [14:0] segled_reg;
 always @(posedge clock) begin
