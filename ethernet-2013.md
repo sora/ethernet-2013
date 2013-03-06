@@ -86,16 +86,14 @@ Ethernetポートの入り口から出口まで1Gbpsで内部転送が可能な1
         input 125M_clk
       , input sys_rst
       , input [7:0] data_in
-      , output [7:0] data_out
+      , output reg [7:0] data_out
     );
-    reg [7:0] data_store;
     always @(posegde 125M_clk) begin
       if (sys_rst)
-        data_store <= 8'b0;
+        data_out <= 8'b0;
       else
-        data_store <= data_in;
+        data_out <= data_in;
     end
-    assign data_out = data_store;
     endmodule
 
 この回路は，入力ポートが3つ (125M_clk, sys_rst, data_in)，出力ポートが1つ (data_out)あります．
