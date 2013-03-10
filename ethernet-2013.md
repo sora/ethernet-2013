@@ -231,7 +231,13 @@ FPGAで1000BASE-Tを使うときは，以下の構成になります．
 - crc.v
     * 今回はhashkeyの生成にCRC32を利用
 
+**内部遅延**
+
 ![内部遅延](https://raw.github.com/sora/ethernet-2013/master/fig/kvs_logic_delay.png?login=sora&token=aaef10cb63989633ca84420436081f7e)
+
+今回の設計では，できるだけ内部ロジックの遅延を低くするために，Requestパケットを受信し終える前にReplayパケットを送信し始めています．
+具体的には，RequestパケットのMemcachedヘッダのMagic Fieldを受信した次のクロックから，応答メッセージ送信を開始しています．
+これだけ遅延を切り詰めた設計でも，100GE ワイヤーレートを実現することは難しいです．ここらへんの遅延の考え方は，10G事始めで少しだけ触れたいと思います．
 
 #### 10G 事始め
 
