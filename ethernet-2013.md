@@ -231,6 +231,7 @@ FPGAで1000BASE-Tを使うときは，以下の構成になります．
 - crc.v
     * 今回はhashkeyの生成にCRC32を利用
 
+![内部遅延](https://raw.github.com/sora/ethernet-2013/master/fig/kvs_logic_delay.png?login=sora&token=aaef10cb63989633ca84420436081f7e)
 
 #### 10G 事始め
 
