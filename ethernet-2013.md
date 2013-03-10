@@ -207,6 +207,8 @@ FPGAで1000BASE-Tを使うときは，以下の構成になります．
 まずは仕様を決めます．
 遅延計測回路のmeasureをベースに，setとgetのみの最低限のKVSを実装してみます．
 
+![ブロックダイアグラム](https://raw.github.com/sora/ethernet-2013/master/fig/kvs_block_diagram.png?login=sora&token=99c98daccccdc0989f68b9de3aa6d5f6)
+
 - 通信プロトコルにUDPを利用
 - コマンドはsetとgetのみサポート
     * expireは対応しない
